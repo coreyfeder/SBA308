@@ -7,3 +7,8 @@
     --color-secondary: rgb(142, 133, 97);
     --color-tertiary: rgb(68, 63, 47);
 }
+
+body {
+    font-family: sans-serif;
+}
+  

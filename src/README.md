@@ -13,7 +13,7 @@ https://www.canva.com/design/DAFxJzEGlWs/OxnBpoTDbneAidu7eN9WLw/view
 
 ## Instructions
 
-Create a script that gathers data, processes it, and then outputs a consistent result as described by a specification.
+Create a script that receives the results of various assignments for a course, then outputs a performance summary for each student.
 
 ## Schema
 

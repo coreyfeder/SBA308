@@ -1,4 +1,6 @@
 # Per Scholas—SBA 308—JavaScript Fundamentals
+https://perscholas.instructure.com/courses/1923/assignments/355959
+https://www.canva.com/design/DAFxJzEGlWs/OxnBpoTDbneAidu7eN9WLw/view
 
 ## Objectives
 

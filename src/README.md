@@ -39,36 +39,36 @@ getLearnerData(
 
 #### `CourseInfo` object
 
-| field  | type   | description |
-|--------|--------|--|
-| `id` | number | student ID |
-| `name` | string | student name |
+| field  | less terrible name | type   | description |
+|--------|--|--------|--|
+| `id` | `course_id` | number | course ID |
+| `name` | `course_name` | string | course name |
 
 #### `AssignmentGroup` object
 
-| field  | type   | description |
-|--------|--------|--|
-| `id`   | number | student ID |
-| `name` | string | student name |
-| `course_id` | number | the ID of the course the assignment group belongs to |
-| `group_weight` | number | the percentage weight of the entire assignment group |
-| `assignments` | array of `AssignmentInfo` |  |
+| field  | less terrible name | type   | description |
+|--------|--|--------|--|
+| `id`   | `assignment_id` | number | assignment ID |
+| `name` | `assignment_name` | string | assignment name |
+| `course_id` |  | number | the ID of the course the assignment group belongs to |
+| `group_weight` | `assignment_max_points` | number | the percentage weight of the entire assignment group |
+| `assignments` |  | array of `AssignmentInfo` |  |
 
 #### `AssignmentInfo` object
 
-| field  | type   | description |
-|--------|--------|--|
-| `id`   | number | student ID |
-| `name` | string | student name |
-| `due_at` | Date string | the due date for the assignment |
-| `points_possible` | number | the maximum points possible for the assignment |
+| field  | less terrible name | type   | description |
+|--------|--|--------|--|
+| `id`   | `learner_id` | number | learner ID |
+| `name` | `learner_name` | string | learner name |
+| `due_at` |  | Date string | the due date for the assignment |
+| `points_possible` |  | number | the maximum points possible for the assignment |
 
 #### `LearnerSubmission` object
 
 | field  | type   | description |
 |--------|--------|--|
-| `learner_id`   | number | student ID |
-| `assignment_id` | number | student name |
+| `learner_id`   | number | learner ID |
+| `assignment_id` | number | learner name |
 | `submission` | Submission object | assignment's submission date and score |
 
 #### `Submission` object

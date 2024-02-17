@@ -77,29 +77,17 @@ getLearnerData(
 | `score` | number |  |
 
 
+#### Output
 
-#### Outputs
+Output an array of `LearnerCurrentStanding` objects:
 
-```
-{
-    // the ID of the learner for which this data has been collected
-    "id": number,
+| field  | type   | description |
+|--------|--------|--|
+| `id` | number | the ID of the learner for which this data has been collected |
+| `avg` | number | the learner’s total, weighted average.<br />Weigh all points equally, not all assignments (sum of actual scores / sum of possible score) |
+| `assignment_id`* (number) | score (number) | This key-value pair will map an assignment key to the learner's score for that assignment.<br/>_Repeat this for each applicable assignment._ |
 
-    // the learner’s total, weighted average, in which assignments
-    // with more points_possible should be counted for more
-    // e.g. a learner with 50/100 on one assignment and 190/200 on another
-    // would have a weighted average score of 240/300 = 80%.
-    "avg": number,
-
-    // each assignment should have a key with its ID,
-    // and the value associated with it should be the percentage that
-    // the learner scored on the assignment (submission.score / points_possible)
-    <assignment_id>: number,
-    // if an assignment is not yet due, it should not be included in either
-    // the average or the keyed dictionary of scores
-    
-}
-```
+Weighting example: If a learner scores a 0 out of 10 on one assigment (0%) and 100 out of 100 on another assignment (100%), the weighted score should be (0+100)/(10+100) = 0.9091...; _not_ (0 + 100)/2 = 0.5.
 
 ### Processing Rules
 
@@ -112,26 +100,7 @@ getLearnerData(
     * account for potential errors in the data that your program receives.
     * `points_possible` must not be 0
     * filter/sanitize incooming data for expected value and type.
-
-
-
-
-
-
-### Interface & Implementation
-
-Create a function named getLearnerData() that accepts these values as parameters, in the order listed: (CourseInfo, AssignmentGroup, [LearnerSubmission]), and returns the formatted result, which should be an array of objects as described above.
-
-***Input***
-
-```
-getLearnerData(
-    CourseInfo, 
-    AssignmentGroup, 
-    [LearnerSubmission],
-)
-```
-
-, and returns the formatted result, which should be an array of objects as described above.
+    * if an assignment is not yet due, it should not be included in either the average or the keyed dictionary of scores
+    * If a learner ID matches an assignment ID...fucked.
 
 

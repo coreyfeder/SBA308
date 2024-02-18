@@ -1,6 +1,6 @@
 // Discount assignments not due before this time.
 // _Of course_ we're only using ISO-8601. We're not _animals_.
-const cutoffDate = new Date().toISOString().substring(0,10);
+const cutoffDate = new Date().toISOString().substring(0,10);  // yield 'YYYY-MM-DD'
 
 function getLearnerData(
     courseGroup,        // ONE CourseInfo object

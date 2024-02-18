@@ -23,41 +23,41 @@ Create a script that receives the results of various assignments for a course, t
 
 ```
 getLearnerData(
-    course:         CourseInfo, 
-    assignments:    AssignmentGroup, 
-    submissions:    array of LearnerSubmission,
+    course:             CourseInfo, 
+    assignmentGroup:    AssignmentGroup, 
+    submissions:        array of LearnerSubmission,
 )
 ```
 
 #### Input function `getLearnerData`
 
-| field  | type   | description |
-|--------|--------|--|
-| `course` | `CourseInfo` object |  |
-| `assignments` | `AssignmentGroup` object |  |
+| field | type | description |
+| ----- | ---- | ----------- |
+| `course` | `CourseInfo` object | information about course to which the assignments belong<br />_*Not used_ |
+| `assignmentGroup` | `AssignmentGroup` object | information about a group of assignments |
 | `submissions` | array of `LearnerSubmission` objects | completed student assignments |
 
 #### `CourseInfo` object
 
-| field  | less terrible name | type   | description |
-|--------|--|--------|--|
+| field | think of it as | type | description |
+| ----- | -------------- | ---- | ----------- |
 | `id` | `course_id` | number | course ID |
 | `name` | `course_name` | string | course name |
 
 #### `AssignmentGroup` object
 
-| field  | less terrible name | type   | description |
-|--------|--|--------|--|
+| field | think of it as | type | description |
+| ----- | -------------- | ---- | ----------- |
 | `id`   | `assignment_id` | number | assignment ID |
 | `name` | `assignment_name` | string | assignment name |
 | `course_id` |  | number | the ID of the course the assignment group belongs to |
-| `group_weight` | `assignment_max_points` | number | the percentage weight of the entire assignment group |
+| `group_weight` |  | number | the percentage weight of the entire assignment group<br />...this isn't actually used by anything. |
 | `assignments` |  | array of `AssignmentInfo` |  |
 
 #### `AssignmentInfo` object
 
-| field  | less terrible name | type   | description |
-|--------|--|--------|--|
+| field | think of it as | type | description |
+| ----- | -------------- | ---- | ----------- |
 | `id`   | `learner_id` | number | learner ID |
 | `name` | `learner_name` | string | learner name |
 | `due_at` |  | Date string | the due date for the assignment |
@@ -65,26 +65,26 @@ getLearnerData(
 
 #### `LearnerSubmission` object
 
-| field  | type   | description |
-|--------|--------|--|
+| field | type | description |
+| ----- | ---- | ----------- |
 | `learner_id`   | number | learner ID |
 | `assignment_id` | number | learner name |
-| `submission` | Submission object | assignment's submission date and score |
+| `submission` | Submission object | the learner's submission of this assignment |
 
 #### `Submission` object
 
-| field  | type   | description |
-|--------|--------|--|
-| `submitted_at` | Date string |  |
-| `score` | number |  |
+| field | type | description |
+| ----- | ---- | ----------- |
+| `submitted_at` | Date string | date of submission |
+| `score` | number | total number of points given |
 
 
 #### Output
 
 Output an array of `LearnerCurrentStanding` objects:
 
-| field  | type   | description |
-|--------|--------|--|
+| field | type | description |
+| ----- | ---- | ----------- |
 | `id` | number | the ID of the learner for which this data has been collected |
 | `avg` | number | the learner’s total, weighted average.<br />Weigh all points equally, not all assignments (sum of actual scores / sum of possible score) |
 | `assignment_id`* (number) | score (number) | This key-value pair will map an assignment key to the learner's score for that assignment.<br/>_Repeat this for each applicable assignment._ |
@@ -103,6 +103,29 @@ Weighting example: If a learner scores a 0 out of 10 on one assigment (0%) and 1
     * `points_possible` must not be 0
     * filter/sanitize incooming data for expected value and type.
     * if an assignment is not yet due, it should not be included in either the average or the keyed dictionary of scores
-    * If a learner ID matches an assignment ID...fucked.
+
+## Data Mapping
+
+| output field | source | aggregation method |
+| ------------ | ------ | ------------------ |
+| `id` (`learnerId`) | table key | establishes table relationships |
+| `avg` | (composite) | calculated from `Submission.score` and `AssigmentInfo.points_possible` |
+| `assignment_id`* |  | key-value pair mapping assignment key to learner's score.<br/>_Repeat for each included assignment._ |
+
+*Composite field `avg`:*
+| element field | source | aggregation method |
+| ------------- | ------ | ------------------ |
+| `score` | `submissions` ([`LearnerSubmission`])<br /> > `submission` <br /> > `score` | group by `AssignmentGroup`<br />> sum by learner's `id` |
+| `points_possible` | `assignmentGroup` (`AssigmentGroup`)<br /> > `assignments` ([AssignmentInfo])<br /> > `points_possible` | group by `AssignmentGroup`<br /> > sum |
 
 
+# Future Improvements
+
+* Accept more than one group of assignments in a single function call.
+* Accept assignments of more than one course in a single function call.
+* Allow more than one submission per assignment per learner.
+    * Allow selection of reconciliation methods (highest, latest, average, weighted average...).
+* Check for late submissions.
+    * Allow selection of penalization methods (reduction: none | flat | percent; increase: nonincreasing | linear | additive | multiplicative).
+* Calculate class rankings or percentiles.
+* Project range of possible final scores given assignments not yet due.

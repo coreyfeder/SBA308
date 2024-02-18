@@ -19,16 +19,6 @@ Create a script that receives the results of various assignments for a course, t
 
 ### Input
 
-#### `getLearnerData`
-
-```
-getLearnerData(
-    course:             CourseInfo, 
-    assignmentGroup:    AssignmentGroup, 
-    submissions:        array of LearnerSubmission,
-)
-```
-
 #### Input function `getLearnerData`
 
 | field | type | description |
@@ -39,47 +29,43 @@ getLearnerData(
 
 #### `CourseInfo` object
 
-| field | think of it as | type | description |
-| ----- | -------------- | ---- | ----------- |
-| `id` | `course_id` | number | course ID |
-| `name` | `course_name` | string | course name |
+_*Not used_
+
+| field | think of it as | type | required | description |
+| ----- | -------------- | ---- | -------- | ----------- |
+| `id` | `course_id` | number | false | course ID |
+| `name` | `course_name` | string | false | course name |
 
 #### `AssignmentGroup` object
 
-| field | think of it as | type | description |
-| ----- | -------------- | ---- | ----------- |
-| `id`   | `assignment_id` | number | assignment ID |
-| `name` | `assignment_name` | string | assignment name |
-| `course_id` |  | number | the ID of the course the assignment group belongs to |
-| `group_weight` |  | number | the percentage weight of the entire assignment group<br />...this isn't actually used by anything. |
-| `assignments` |  | array of `AssignmentInfo` |  |
+| field | think of it as | type | required | description |
+| ----- | -------------- | ---- | -------- | ----------- |
+| `id`   | `assignment_group_id` | number |  | Assignment group ID |
+| `name` | `assignment_group_name` | string | false | Assignment group name |
+| `course_id` |  | number | false | the ID of the course the assignment group belongs to |
+| `group_weight` |  | number | false | the percentage weight of the entire assignment group<br /> |
+| `assignments` |  | array of `AssignmentInfo` | true |  |
 
-#### `AssignmentInfo` object
+##### `AssignmentInfo` object
 
-| field | think of it as | type | description |
-| ----- | -------------- | ---- | ----------- |
-| `id`   | `learner_id` | number | learner ID |
-| `name` | `learner_name` | string | learner name |
-| `due_at` |  | Date string | the due date for the assignment |
-| `points_possible` |  | number | the maximum points possible for the assignment |
+| field | think of it as | type | required | description |
+| ----- | -------------- | ---- | -------- | ----------- |
+| `id`   | `assignment_id` | number | Assignment ID |
+| `name` | `assignment_name` | string | Assignment name |
+| `due_at` |  | Date string | The due date for the assignment |
+| `points_possible` |  | number | The maximum points possible for the assignment<br />Enter `0` for extra-credit assignments. |
 
 #### `LearnerSubmission` object
 
 | field | type | description |
 | ----- | ---- | ----------- |
 | `learner_id`   | number | learner ID |
-| `assignment_id` | number | learner name |
-| `submission` | Submission object | the learner's submission of this assignment |
+| `assignment_id` | number | assignment ID |
+| `submission` | (object) | the learner's submission of this assignment |
+| `submission.submitted_at` | Date string | date of submission |
+| `submission.score` | number | total number of points given |
 
-#### `Submission` object
-
-| field | type | description |
-| ----- | ---- | ----------- |
-| `submitted_at` | Date string | date of submission |
-| `score` | number | total number of points given |
-
-
-#### Output
+### Output
 
 Output an array of `LearnerCurrentStanding` objects:
 
@@ -91,7 +77,7 @@ Output an array of `LearnerCurrentStanding` objects:
 
 Weighting example: If a learner scores a 0 out of 10 on one assigment (0%) and 100 out of 100 on another assignment (100%), the weighted score should be (0+100)/(10+100) = 0.9091...; _not_ (0 + 100)/2 = 0.5.
 
-### Processing Rules
+## Processing Rules
 
 * If an assignment is not yet due, do not include it in the results or the average.
 
@@ -116,10 +102,10 @@ Weighting example: If a learner scores a 0 out of 10 on one assigment (0%) and 1
 | element field | source | aggregation method |
 | ------------- | ------ | ------------------ |
 | `score` | `submissions` ([`LearnerSubmission`])<br /> > `submission` <br /> > `score` | group by `AssignmentGroup`<br />> sum by learner's `id` |
-| `points_possible` | `assignmentGroup` (`AssigmentGroup`)<br /> > `assignments` ([AssignmentInfo])<br /> > `points_possible` | group by `AssignmentGroup`<br /> > sum |
+| `points_possible` | `assignmentGroup` (`AssigmentGroup`)<br /> > `assignments` ([AssignmentInfo])<br /> > `points_possible` | group by `AssignmentGroup`<br /> > group by [`AssignmentInfo`] |
 
 
-# Future Improvements
+## Future Improvements
 
 * Accept more than one group of assignments in a single function call.
 * Accept assignments of more than one course in a single function call.

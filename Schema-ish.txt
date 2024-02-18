@@ -1,0 +1,49 @@
+Schema
+# Not a real schema format, afaik.
+
+Input:
+[
+    "course": CourseInfo{
+        "id": number,
+        "name": string,
+    },
+    "assignmentGroup": AssignmentGroup{
+        "id": number,
+        "name": string,
+        "course_id": number,
+        "group_weight": number,
+        "assignments": array[
+            AssignmentInfo{
+                "id": number,
+                "name": number,
+                "due_at": Date string,
+                "points_possible": number,
+            },
+        ],
+    },
+    "submissions": array[
+        [LearnerSubmission]{
+            "learner_id": number,
+            "assignment_id": number,
+            "submission": {
+                "submitted_at": Date string,
+                "score": number,
+            },
+        },
+    ],
+]
+
+Output:
+{
+    "id": number,
+    "avg": number,
+    ...["assignment_id": number,],  # repeat contents as appropriate
+}
+
+Ambiguities:
+- Learner IDs with no results in final output
+- Learner IDs known but with no submitted assignments
+- Missing AssignmentInfo fields
+- Missing LearnerSubmission fields
+- Really, _any_ missing fields
+

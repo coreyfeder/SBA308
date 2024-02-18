@@ -23,13 +23,11 @@ Create a script that receives the results of various assignments for a course, t
 
 | field | type | description |
 | ----- | ---- | ----------- |
-| `course` | `CourseInfo` object | information about course to which the assignments belong<br />_*Not used_ |
+| `course` | `CourseInfo` object | information about course to which the assignments belong |
 | `assignmentGroup` | `AssignmentGroup` object | information about a group of assignments |
 | `submissions` | array of `LearnerSubmission` objects | completed student assignments |
 
 #### `CourseInfo` object
-
-_*Not used_
 
 | field | think of it as | type | required | description |
 | ----- | -------------- | ---- | -------- | ----------- |
@@ -42,8 +40,8 @@ _*Not used_
 | ----- | -------------- | ---- | -------- | ----------- |
 | `id`   | `assignment_group_id` | number |  | Assignment group ID |
 | `name` | `assignment_group_name` | string | false | Assignment group name |
-| `course_id` |  | number | false | the ID of the course the assignment group belongs to |
-| `group_weight` |  | number | false | the percentage weight of the entire assignment group<br /> |
+| `course_id` |  | number | false | the ID of the course to which the assignment group belongs<br />_Must match CourseInfo provided._ |
+| `group_weight` |  | number | false | the percentage weight of the entire assignment group<br />_*Not used._ |
 | `assignments` |  | array of `AssignmentInfo` | true |  |
 
 ##### `AssignmentInfo` object
@@ -110,8 +108,7 @@ Weighting example: If a learner scores a 0 out of 10 on one assigment (0%) and 1
 * Accept more than one group of assignments in a single function call.
 * Accept assignments of more than one course in a single function call.
 * Allow more than one submission per assignment per learner.
-    * Allow selection of reconciliation methods (highest, latest, average, weighted average...).
-* Check for late submissions.
-    * Allow selection of penalization methods (reduction: none | flat | percent; increase: nonincreasing | linear | additive | multiplicative).
+* Allow selection of reconciliation methods (highest, latest, average, weighted average...).
+* Allow selection of lateness penalization methods (reduction: none | flat | percent; increase: nonincreasing | linear | additive | multiplicative).
 * Calculate class rankings or percentiles.
 * Project range of possible final scores given assignments not yet due.

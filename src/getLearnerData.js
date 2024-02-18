@@ -3,9 +3,9 @@
 const cutoffDate = new Date().toISOString().substring(0,10);
 
 function getLearnerData(
-    courseGroup,        // CourseInfo
-    assignmentGroup,    // AssignmentGroup (which includes array of AssignmentInfo)
-    submissions,        // array of LearnerSubmission
+    courseGroup,        // ONE CourseInfo object
+    assignmentGroup,    // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
+    submissions,        // ARRAY of LearnerSubmission
 ) {
     /* 
     brainstorming

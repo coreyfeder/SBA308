@@ -1,11 +1,43 @@
-
+// REMOVE BEFORE SUBMISSION
+function clg(...args) { console.log(...args); };
 
 // Discount assignments not due before this time.
 // _Of course_ we're only using ISO-8601. We're not _animals_.
 const cutoffDate = new Date().toISOString().substring(0,10);  // yield 'YYYY-MM-DD'
 
+function validateArguments(
+    course,             // ONE CourseInfo object
+    assignmentGroup,    // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
+    submissions,        // ARRAY of LearnerSubmission
+) {
+    let errors = [];
+    try {
+        // TODO: sanitize inputs
+        // TODO: verify incoming data against schema with an actual verification product
+
+        // Do the inputs seem vaguely correct?
+        if (    (!course) 
+                || (typeof course != 'object')
+                || !(Object.keys(course) > 0)
+            ) errors.push("CourseInfo");
+        if (    (!assignmentGroup)
+                || (typeof assignmentGroup != 'object')
+                || !(Object.keys(assignmentGroup) > 0)
+            ) errors.push("AssignmentGroup");
+        if (    (!submissions)
+                || (!Array.isArray(submissions)) 
+                || !(submissions.length > 0)
+            ) errors.push("LearnerSubmissions");
+        if errors throw "Required input is missing or in the wrong format: " + ", ".join(errors)
+        // Do the CourseInfo and AssignmentGroup match?
+        if (course.id != assignmentGroup.course_id) throw "Thw assignment group does not belong to the course specified. (`CourseInfo.id`, `AssignmentGroup.course_id`)";
+        // TODO: Do the sssignments belong to the AssignmentGroup?
+    };
+
+}
+
 function getLearnerData(
-    courseGroup,        // ONE CourseInfo object
+    course,             // ONE CourseInfo object
     assignmentGroup,    // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
     submissions,        // ARRAY of LearnerSubmission
 ) {
@@ -27,9 +59,51 @@ function getLearnerData(
      */
 
     /*
+        Validate while building:
+        1. assignmentGroup.course_id == course.id
+        2. submissions[n].assignemt_id matches an assignemtneGroup.assignments.id
         Build:
+        1.  {};
+        2.  {
+                {learnerId}: {
+                    "id": {learnerId},
+                    "avg": 0,
+                    "assignments": [],
+                },
+                ...
+            }
+        3.  {
+                {learnerId}: {
+                    "id": {learnerId},
+                    "avg": 0,
+                    "assignments": [
+                        {
+                            "assignment_id": {assignment_id}
+                        },
+                    ],
+                },
+                ...
+            }
+
+
+        2.  [{
+                "id": {learnerId},
+
+                learnerId2: {},
+                ...
+                learnerIdN: {},
+            }];
+        3.  {
+                learnerId1: {
+
+                },
+                ...
+            };
+
      */
-    
+
+    }
+
     let result;
     
     //  get a list of unique learnerIds
@@ -38,6 +112,8 @@ function getLearnerData(
         learnerIds.add(Number(sub.learner_id));
     }
     console.log( "Learners:" + learnerIds );
+
+
 
     // TODO: 
     let mapAssignmentsToMaxPts = {}

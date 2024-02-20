@@ -5,6 +5,13 @@ https://perscholas.instructure.com/courses/1923/assignments/355959
 https://www.canva.com/design/DAFxJzEGlWs/OxnBpoTDbneAidu7eN9WLw/view
 */
 
+
+/* 
+All of this data—incoming and outgoing—is the wrong shape. That's what's making every potential solution so unpleasant.
+Okay, forgoing elegant reductionism to make something pleasing to work with.
+*/
+
+
 /* 
 brainstorming
     algorithm
@@ -20,7 +27,7 @@ brainstorming
         * centralize validation, or check only when data is used?
         * continue through easily-recoverable issues (eg, numbers passed as strings)?
         * continue through patially-recoverable issues (eg, a due date not being a parsable date)?
-    */
+*/
 
 /*
     Validate while building:
@@ -64,100 +71,125 @@ brainstorming
             ...
         };
 
-    */
-
-
-
-// REMOVE BEFORE SUBMISSION
-function clg(...args) { console.log(...args); };
+*/
 
 
 // Discount assignments not due before this time.
 // _Of course_ we're only using ISO-8601. We're not _animals_.
-const cutoffDate = new Date().toISOString().substring(0,10);  // yield 'YYYY-MM-DD'
+const CutoffDate = new Date().toISOString().substring(0,10);  // yield 'YYYY-MM-DD'
+
+
+function getLearnerData(
+    CourseInfo,             // ONE CourseInfo object
+    AssignmentGroup,        // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
+    LearnerSubmissions,     // ARRAY of LearnerSubmission
+) {
+    // 1. Validate inputs, to some extent
+
+    // 2. build map to general course info
+    const AssignmentMap = mapAssignmentInfo(AssignmentGroup);
+    clg('\nAssignmentMap');
+    clg(AssignmentMap);
+    
+    // 3. build submission tree. or maybe just "bush".
+    // AssigmentMap now points to elements of AssignmentGroup.
+    // What happens when I pass AssigmentMap but not AssignmentGroup?
+    const RearrangedSubmissions = rearrangeSubmissions(LearnerSubmissions, AssignmentMap);
+    clg('\RearrangedSubmissions');
+    clg(RearrangedSubmissions);
+
+    let result = [];
+    return result;
+}
+
+
+function validateTest(
+    course,
+    assignmentGroup,
+    submissions,
+) {
+    return;
+}
 
 
 function validateRequestPayload(
-    course,             // ONE CourseInfo object
-    assignmentGroup,    // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
-    submissions,        // ARRAY of LearnerSubmission
+    course,
+    assignmentGroup,
+    submissions,
 ) {
+    // Perform basic validation on the incoming data.
+    // TODO: sanitize inputs
+    // TODO: verify incoming data against schema with an actual verification product
     let errors = [];
     try {
-        // TODO: sanitize inputs
-        // TODO: verify incoming data against schema with an actual verification product
-
-        // Do the inputs seem vaguely correct?
-        if (    (!course) 
-                || (typeof course != 'object')
-                || !(Object.keys(course) > 0)
+        // Do the inputs seem vaguely correct? Not missing, not blank?
+        if ((!course) 
+            || (typeof course != 'object')
+            || !(Object.keys(course) > 0)
             ) errors.push("CourseInfo");
-        if (    (!assignmentGroup)
-                || (typeof assignmentGroup != 'object')
-                || !(Object.keys(assignmentGroup) > 0)
+        if ((!assignmentGroup)
+            || (typeof assignmentGroup != 'object')
+            || !(Object.keys(assignmentGroup) > 0)
             ) errors.push("AssignmentGroup");
-        if (    (!submissions)
-                || (!Array.isArray(submissions)) 
-                || !(submissions.length > 0)
+        if ((!submissions)
+            || (!Array.isArray(submissions)) 
+            || !(submissions.length > 0)
             ) errors.push("LearnerSubmissions");
         if (errors.length > 0) throw "Required input is missing or in the wrong format: " + errors.join(', ');
+
         // Do the CourseInfo and AssignmentGroup match?
         if (course.id != assignmentGroup.course_id) throw "Thw assignment group does not belong to the course specified.";
-        // TODO: Do the assignments belong to the AssignmentGroup?
+
+        // Are the dates date-y?
+        for (let assignment of AssignmentGroup.assignments) {
+            if isNaN(Date.parse(assignment.due_at)) {
+                throw `Assignment has invalid date: ${assignment.due_at}`;
+            } else if (!(typeof assignment.id == 'number')) {
+                throw `Assignment has invalid ID: ${assignment.id}`;
+            // } else if (assignment.due_at > CutoffDate) {
+                // continue;
+            } else {
+                // assignmentMap[assignment.id] = {
+                    // due_at: assignment.due_at
+                };
+            };
+        };
     } catch (err) {
         // Should I re-throw this to make it explode? Or by "graceful" do they mean "yell but don't crash"?
         throw ('Error in request data: ' + err);
     };
 };
 
-function extractLearnerIds(submissions) {
-    //  get a list of unique learnerIds
-    let learnerIds = new Set();
-    /* for (let sub of submissions) {
-        if (!)
-        learnerIds.add(Number(sub.learner_id));
-    } */
-    submissions.forEach(function (sub) { learnerIds.add(Number(sub.learner_id)) } );
-    return learnerIds;
+
+
+function mapAssignmentInfo(AssignmentGroup) {
+    // Make a lookup table to make finding assignment info easier
+    let assignmentMap = {};
+    for (let assignment of AssignmentGroup.assignments) {
+        assignmentMap['assignment.id'] = assignment;
+    };
+    return assignmentMap;
 };
 
-
-function getLearnerData(
-    course,             // ONE CourseInfo object
-    assignmentGroup,    // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
-    submissions,        // ARRAY of LearnerSubmission
-) {
-    let errors = validateRequestPayload(course, assignmentGroup, submissions);
-
-    let result;
-    const listLearnerIds = ;
-    
-    //  get a list of unique learnerIds
-    let learnerIds = new Set();
-    for (let sub of submissions) {
-        learnerIds.add(Number(sub.learner_id));
+function arrangeAssignments(LearnerSubmissions, assignmentMap) {
+    // Return relevant student assignments, organized by student
+    for (let submission of LearnerSubmissions) {
+        if isAssignmentValid(submission, assignmentMap 
     }
-    console.log( "Learners:" + learnerIds );
+};
 
-
-
-    // TODO: 
-    let mapAssignmentsToMaxPts = {}
-    assignmentGroup.forEach(assignment => {
-        if (assignment.due_at <= cutoffDate)
-            mapAssignmentsToMaxPts[assignment.id] = assignment.points_possible;
-    });
-
-    result = [
-        {
-            "id": learnerId,
-            "avg": learnerWeightedAvg,
-            ...[assignment_id: assignment_score]
-        } for each learnerId
-    ]
-    return result;
+function isAssignmentValid(submission, assignmentMap) {
+    if (assignmentMap[submission.id]
 }
 
+// function penalilzeForLateness(submission, assignmentMap) {};
+
+function extractLearnerIds(LearnerSubmissions) {
+    //  get a list of unique learnerIds
+    let learnerIds = new Set();
+    LearnerSubmissions.forEach(function (sub) { learnerIds.add(Number(sub.learner_id)) } );
+    return learnerIds;
+};
 
 
 /* ------------------------|------------------------|------------------------ */
@@ -241,7 +273,5 @@ const LearnerSubmissions = [
     }
 ];
 
-let result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-
-console.log(result);
-
+console.log('Executing.');
+console.log(getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions));

@@ -85,6 +85,22 @@ const CutoffDate = new Date().toISOString().substring(0,10);  // yield 'YYYY-MM-
 function clg(...args) { console.log(...args); };
 
 
+
+function pointsPossible(assignmentId) {
+    // Note this WILL return 0 if the assignment ID is not found in the group.
+    // This is for extra credit assignments. Assignment ID does not need to be included in group.
+    // Points scored will be added to total, while total points possible will not be increased.
+    // Nah, it's okay; I added it to the spec.
+    let result = 0;
+    for (let assignment of AssignmentGroup.assignments) {
+        if (assignmentId == assignment.id) {
+            result = assignment.points_possible;
+            break;
+        };
+    };
+    return result;
+};
+
 /*-  Primary  -*/
 
 function getLearnerData(
@@ -92,7 +108,15 @@ function getLearnerData(
     AssignmentGroup,        // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
     LearnerSubmissions,     // ARRAY of LearnerSubmission
 ) {
-    return [{}];
+    let result = [
+        {
+            id: 1234,
+            avg: 1,
+            1: 1,
+            2: 1,
+        },
+    ];
+    return result;
 };
 
 console.log(getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions));

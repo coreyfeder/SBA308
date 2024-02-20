@@ -21,26 +21,26 @@ Create a script that receives the results of various assignments for a course, t
 
 #### Input function `getLearnerData`
 
-| field | type | description |
-| ----- | ---- | ----------- |
-| `course` | `CourseInfo` object | information about course to which the assignments belong |
-| `assignmentGroup` | `AssignmentGroup` object | information about a group of assignments |
-| `submissions` | array of `LearnerSubmission` objects | completed student assignments |
+| field | description |
+| ----- | ----------- |
+| `CourseInfo` object | information about course to which the assignments belong |
+| `AssignmentGroup` object | information about a group of assignments |
+| array of `LearnerSubmission` objects | completed student assignments |
 
 #### `CourseInfo` object
 
 | field | think of it as | type | required | description |
 | ----- | -------------- | ---- | -------- | ----------- |
-| `id` | `course_id` | number | false | course ID |
+| `id` | `course_id` | number | true | course ID |
 | `name` | `course_name` | string | false | course name |
 
 #### `AssignmentGroup` object
 
 | field | think of it as | type | required | description |
 | ----- | -------------- | ---- | -------- | ----------- |
-| `id`   | `assignment_group_id` | number |  | Assignment group ID |
+| `id`   | `assignment_group_id` | number | false | Assignment group ID |
 | `name` | `assignment_group_name` | string | false | Assignment group name |
-| `course_id` |  | number | false | the ID of the course to which the assignment group belongs<br />_Must match CourseInfo provided._ |
+| `course_id` |  | number | true | the ID of the course to which the assignment group belongs<br />_Must match CourseInfo provided._ |
 | `group_weight` |  | number | false | the percentage weight of the entire assignment group<br />_*Not used._ |
 | `assignments` |  | array of `AssignmentInfo` | true |  |
 

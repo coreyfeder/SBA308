@@ -1,10 +1,8 @@
-// The provided course information.
 const CourseInfo = {
   id: 451,
   name: "Introduction to JavaScript"
 };
 
-// The provided assignment group.
 const AssignmentGroup = {
   id: 12345,
   name: "Fundamentals of JavaScript",
@@ -32,7 +30,6 @@ const AssignmentGroup = {
   ]
 };
 
-// The provided learner submission data.
 const LearnerSubmissions = [
   {
     learner_id: 125,

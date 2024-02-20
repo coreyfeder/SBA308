@@ -74,6 +74,11 @@ brainstorming
 */
 
 
+// REMOVE BEFORE SUBMISSION
+function clg(...args) { console.log(...args); };
+
+
+
 // Discount assignments not due before this time.
 // _Of course_ we're only using ISO-8601. We're not _animals_.
 const CutoffDate = new Date().toISOString().substring(0,10);  // yield 'YYYY-MM-DD'
@@ -84,18 +89,21 @@ function getLearnerData(
     AssignmentGroup,        // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
     LearnerSubmissions,     // ARRAY of LearnerSubmission
 ) {
+    clg('\nBEGIN');
     // 1. Validate inputs, to some extent
 
     // 2. build map to general course info
     const AssignmentMap = mapAssignmentInfo(AssignmentGroup);
+    clg('\nAssignmentGroup');
+    clg(AssignmentGroup);
     clg('\nAssignmentMap');
     clg(AssignmentMap);
     
     // 3. build submission tree. or maybe just "bush".
     // AssigmentMap now points to elements of AssignmentGroup.
     // What happens when I pass AssigmentMap but not AssignmentGroup?
-    const RearrangedSubmissions = rearrangeSubmissions(LearnerSubmissions, AssignmentMap);
-    clg('\RearrangedSubmissions');
+    const RearrangedSubmissions = arrangeSubmissions(LearnerSubmissions, AssignmentMap);
+    clg('\nRearrangedSubmissions');
     clg(RearrangedSubmissions);
 
     let result = [];
@@ -142,7 +150,7 @@ function validateRequestPayload(
 
         // Are the dates date-y?
         for (let assignment of AssignmentGroup.assignments) {
-            if isNaN(Date.parse(assignment.due_at)) {
+            if (isNaN(Date.parse(assignment.due_at))) {
                 throw `Assignment has invalid date: ${assignment.due_at}`;
             } else if (!(typeof assignment.id == 'number')) {
                 throw `Assignment has invalid ID: ${assignment.id}`;
@@ -151,7 +159,6 @@ function validateRequestPayload(
             } else {
                 // assignmentMap[assignment.id] = {
                     // due_at: assignment.due_at
-                };
             };
         };
     } catch (err) {
@@ -166,29 +173,53 @@ function mapAssignmentInfo(AssignmentGroup) {
     // Make a lookup table to make finding assignment info easier
     let assignmentMap = {};
     for (let assignment of AssignmentGroup.assignments) {
-        assignmentMap['assignment.id'] = assignment;
+        clg('inside mapAssignmentInfo');
+        clg('  Current assignmentMap');
+        clg(assignmentMap);
+        assignmentMap[assignment.id] = assignment;
     };
     return assignmentMap;
 };
 
-function arrangeAssignments(LearnerSubmissions, assignmentMap) {
+function arrangeSubmissions(LearnerSubmissions, assignmentMap) {
     // Return relevant student assignments, organized by student
+    let arrangedSubmissions = {};
     for (let submission of LearnerSubmissions) {
-        if isAssignmentValid(submission, assignmentMap 
-    }
+        clg('analyzing a submission:');
+        clg(arrangedSubmissions);
+        if (isAssignmentValid(submission, assignmentMap)) {
+            // clg('\nInside arrangeSubmissions');
+            // clg('arrangedSubmissions thus far:');
+            // clg('submission: ');
+            // clg(submission);
+            // clg('submission.assignemt_id');
+            // clg(submission.assignemt_id);
+            // clg('assignmentMap: ');
+            // clg(assignmentMap);
+            // clg(assignmentMap[submission.assignemt_id]);
+            // arrangedSubmissions[submission.learner_id] = {
+                // 'assignment_id': submission.assignemt_id,
+                // 'points_scored': adjustScoreForLateness(
+                //     assignmentMap[submission.assignemt_id].due_at,
+                //     submission.submission.submitted_at, 
+                //     submission.submission.score,
+                //     assignmentMap[submission.assignemt_id].points_possible,
+                // ),
+                // 'points_possible': assignmentMap[submission.assignemt_id].points_possible,
+            };
+        };
+    };
 };
 
+// WIP
 function isAssignmentValid(submission, assignmentMap) {
-    if (assignmentMap[submission.id]
-}
+    // if (assignmentMap[submission.id]
+    return true;
+};
 
-// function penalilzeForLateness(submission, assignmentMap) {};
-
-function extractLearnerIds(LearnerSubmissions) {
-    //  get a list of unique learnerIds
-    let learnerIds = new Set();
-    LearnerSubmissions.forEach(function (sub) { learnerIds.add(Number(sub.learner_id)) } );
-    return learnerIds;
+// WIP
+function adjustScoreForLateness(dueDate, submissionDate, rawScore, maxScore) {
+    return rawScore;
 };
 
 

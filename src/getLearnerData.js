@@ -78,7 +78,6 @@ brainstorming
 function clg(...args) { console.log(...args); };
 
 
-
 // Discount assignments not due before this time.
 // _Of course_ we're only using ISO-8601. We're not _animals_.
 const CutoffDate = new Date().toISOString().substring(0,10);  // yield 'YYYY-MM-DD'
@@ -93,19 +92,22 @@ function getLearnerData(
     // 1. Validate inputs, to some extent
 
     // 2. build map to general course info
+    /* 
     const AssignmentMap = mapAssignmentInfo(AssignmentGroup);
     clg('\nAssignmentGroup');
     clg(AssignmentGroup);
     clg('\nAssignmentMap');
     clg(AssignmentMap);
-    
+    */
+
     // 3. build submission tree. or maybe just "bush".
     // AssigmentMap now points to elements of AssignmentGroup.
     // What happens when I pass AssigmentMap but not AssignmentGroup?
+    /* 
     const RearrangedSubmissions = arrangeSubmissions(LearnerSubmissions, AssignmentMap);
     clg('\nRearrangedSubmissions');
     clg(RearrangedSubmissions);
-
+    */
     let result = [];
     return result;
 }

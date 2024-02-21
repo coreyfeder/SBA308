@@ -1,111 +1,19 @@
-/*-  Test Data  -*/
+/* 
+Per Scholas SE 2024-RTT-03 – SBA 308
+Corey Feder
+https://perscholas.instructure.com/courses/1923/assignments/355959
+https://www.canva.com/design/DAFxJzEGlWs/OxnBpoTDbneAidu7eN9WLw/view
+*/
 
-const CourseInfo = {
-    id: 451,
-    name: "Introduction to JavaScript",
-};
-
-const AssignmentGroup = {
-    id: 12345,
-    name: "Fundamentals of JavaScript",
-    course_id: 451,
-    group_weight: 25,
-    assignments: [
-        {
-            id: 1,
-            name: "Declare a Variable",
-            due_at: "2023-01-25",
-            points_possible: 50,
-        },
-        {
-            id: 2,
-            name: "Write a Function",
-            due_at: "2023-02-27",
-            points_possible: 150,
-        },
-        {
-            id: 3,
-            name: "Code the World",
-            due_at: "3156-11-15",
-            points_possible: 500,
-        },
-    ],
-};
-
-const LearnerSubmissions = [
-    {
-        learner_id: 125,
-        assignment_id: 1,
-        submission: {
-            submitted_at: "2023-01-25",
-            score: 47,
-        },
-    },
-    {
-        learner_id: 125,
-        assignment_id: 2,
-        submission: {
-            submitted_at: "2023-02-12",
-            score: 150,
-        },
-    },
-    {
-        learner_id: 125,
-        assignment_id: 3,
-        submission: {
-            submitted_at: "2023-01-25",
-            score: 400,
-        },
-    },
-    {
-        learner_id: 132,
-        assignment_id: 1,
-        submission: {
-            submitted_at: "2023-01-24",
-            score: 39,
-        },
-    },
-    {
-        learner_id: 132,
-        assignment_id: 2,
-        submission: {
-            submitted_at: "2023-03-07",
-            score: 140,
-        },
-    },
-];
+/* 
+All of this data—incoming and outgoing—is the wrong shape. That's what's making every potential solution so unpleasant.
+Okay, forgoing elegant reductionism to make something pleasing to work with.
+*/
 
 const CutoffDate = new Date().toISOString().substring(0, 10); // yield 'YYYY-MM-DD'
 // Ignore assignments not due before this time.
 // _Of course_ we're only using ISO-8601. We're not _animals_.
 let submissionsTree = {};
-
-/*-  Helpers  -*/
-
-/* // Browser log. output to linked web page (if it has an #output element)
-const output = document.getElementById("output");
-function dlog(...args) {
-    output.appendChild(document.createElement("hr"));
-    const newOutput = document.createElement("div");
-    newOutput.innerText = args.values();
-    output.appendChild(newOutput);
-    if (typeof args == "object") {
-        output.appendChild(document.createElement("hr"));
-        const jsonOutput = document.createElement("pre");
-        jsonOutput.innerText = JSON.stringify(args, null, 4);
-        output.appendChild(jsonOutput);
-    }
-} */
-// Console log.
-function clog(...args) {
-    console.log(...args);
-}
-
-// use `dlog` to log to the DOM
-// use `clog` to log to the console
-let log = clog;
-
-/*-  Primary  -*/
 
 function pointsPossible(assignmentId) {
     // Note this WILL return 0 if the assignment ID is not found in the group.
@@ -237,4 +145,5 @@ function getLearnerData(
     return result;
 } // end getLearnerData
 
+// Run if called externally
 getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);

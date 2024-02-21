@@ -11,9 +11,11 @@ Okay, forgoing elegant reductionism to make something pleasing to work with.
 */
 
 const CutoffDate = new Date().toISOString().substring(0, 10); // yield 'YYYY-MM-DD'
+
 // Ignore assignments not due before this time.
 // _Of course_ we're only using ISO-8601. We're not _animals_.
 let submissionsTree = {};
+let CourseInfo, AssignmentGroup, LearnerSubmissions;
 
 function pointsPossible(assignmentId) {
     // Note this WILL return 0 if the assignment ID is not found in the group.
@@ -30,7 +32,7 @@ function pointsPossible(assignmentId) {
     return result;
 }
 
-function dueDate(assignmentId) {
+function dueDate(assignmentId, AssignmentGroup) {
     let result;
     for (let assignment of AssignmentGroup.assignments) {
         if (assignmentId == assignment.id) {
@@ -49,7 +51,7 @@ function dueDate(assignmentId) {
     }
 }
 
-function growSubmissionsTree() {
+function growSubmissionsTree(LearnerSubmissions, AssignmentGroup) {
     for (let submission of LearnerSubmissions) {
         const learnerId = submission.learner_id;
         const assignmentId = submission.assignment_id;
@@ -63,7 +65,7 @@ function growSubmissionsTree() {
             throw errorMsg;
         }
         submissionsTree[learnerId][assignmentId] = {
-            dateDue: dueDate(assignmentId),
+            dateDue: dueDate(assignmentId, AssignmentGroup),
             dateSubmitted: submission.submission.submitted_at,
             scoreRaw: submission.submission.score,
             scoreMax: pointsPossible(assignmentId),
@@ -136,7 +138,7 @@ function getLearnerData(
     AssignmentGroup, // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
     LearnerSubmissions, // ARRAY of LearnerSubmission
 ) {
-    growSubmissionsTree(); // no return; edits global
+    growSubmissionsTree(LearnerSubmissions, AssignmentGroup); // no return; edits global
     pruneSubmissionsTree(CutoffDate, latenessPenalty); // no return; edits global
 
     // TODO: the current version of submissionsTree could have gone

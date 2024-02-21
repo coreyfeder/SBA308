@@ -2,13 +2,6 @@
     box-sizing: border-box;
 }
 
-:root {
-    --color-main: rgb(207, 197, 121);
-    --color-secondary: rgb(142, 133, 97);
-    --color-tertiary: rgb(68, 63, 47);
-}
-
 body {
     font-family: sans-serif;
 }
-  

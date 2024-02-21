@@ -85,11 +85,13 @@ let submissionsTree = {};
 // Browser log. output to linked web page (if it has an #output element)
 const output = document.getElementById("output");
 function dlog(...args) {
+    output.appendChild(document.createElement("hr"));
     const newOutput = document.createElement("div");
     newOutput.innerText = args.values();
     output.appendChild(newOutput);
     if (typeof args == "object") {
-        const jsonOutput = document.createElement("hr");
+        output.appendChild(document.createElement("hr"));
+        const jsonOutput = document.createElement("pre");
         jsonOutput.innerText = JSON.stringify(args, null, 4);
         output.appendChild(jsonOutput);
     }
@@ -141,53 +143,51 @@ function dueDate(assignmentId) {
 }
 
 function growSubmissionsTree() {
-    log("\nDEBUG: beginning growSubmissionsTree");
+    // log("DEBUG: beginning growSubmissionsTree");
     for (let submission of LearnerSubmissions) {
-        log("\nDEBUG: checking loop counter `submission`");
-        log(submission);
+        // log("DEBUG: checking loop counter `submission`");
+        // log(submission);
         const learnerId = submission.learner_id;
         const assignmentId = submission.assignment_id;
-        log(`learnerId: ` + learnerId);
-        log(`assignmentId: ` + assignmentId);
+        // log(`learnerId: ` + learnerId);
+        // log(`assignmentId: ` + assignmentId);
         if (!(learnerId in submissionsTree)) {
             // create an entry for the learner if they don't exist
-            log(`creating entry for learner ${learnerId}`);
+            // log(`creating entry for learner ${learnerId}`);
             submissionsTree[learnerId] = {};
         } else if (assignmentId in submissionsTree[learnerId]) {
             // check for this assignment already having been submitted
             let errorMsg = `Assignment has already been submitted for this learner (learner ${learnerId}, assignment ${assignmentId})`;
-            log(errorMsg);
+            log("ERROR: " + errorMsg);
             throw errorMsg;
         }
-        log("\nShow the whole submissionsTree: ");
-        log(submissionsTree);
-        log(
-            "Attempting to add a property to submissionsTree[learnerId]" +
-                submissionsTree[learnerId],
-        );
+        // log("In-process, but show the submissionsTree thus far: ");
+        // log(submissionsTree);
+        // log("Attempting to add a property to submissionsTree[learnerId]" + submissionsTree[learnerId]);
         submissionsTree[learnerId][assignmentId] = {
             dateDue: dueDate(assignmentId),
             dateSubmitted: submission.submission.submitted_at,
             scoreRaw: submission.submission.score,
             scoreMax: pointsPossible(assignmentId),
         };
-        log("Did it work? submissionsTree[learnerId]: ");
-        log(submissionsTree[learnerId]);
+        // log("Did it work? submissionsTree[learnerId]: ");
+        // log(submissionsTree[learnerId]);
     }
-    log("\nDEBUG: exiting growSubmissionsTree");
-    log("\nFirst, reviewing hostages and residue:");
+    log(
+        "DEBUG: exiting growSubmissionsTree. This should be the overpopulated tree of all possible submissions.",
+    );
     log(submissionsTree);
     return submissionsTree;
 }
 
 function pruneSubmissionsTree(CutoffDate, latenessPenalty) {
     for (let learner in submissionsTree) {
-        log("\n");
-        log(learner);
-        log(submissionsTree[learner]);
+        // log("");
+        // log(learner);
+        // log(submissionsTree[learner]);
         for (let assignment in submissionsTree[learner]) {
-            log(assignment);
-            log(submissionsTree[learner][assignment]);
+            // log(assignment);
+            // log(submissionsTree[learner][assignment]);
             // prune assignments not yet due
             if (submissionsTree[learner][assignment].dateDue > CutoffDate) {
                 delete submissionsTree[learner][assignment];
@@ -206,9 +206,12 @@ function pruneSubmissionsTree(CutoffDate, latenessPenalty) {
 
 function latenessPenalty(assignmentBranch) {
     // Just subtracting 10% of max.
-    let penalty = 0.1; // flat penalty off max
+    let penaltyPercentOffMax = 0.1; // flat penalty off max
     // Minimum score per assignment is 0. Don't subtract more points than were earned.
-    return Math.max(0, assignmentBranch.scoreRaw - assignmentBranch.scoreMax * penalty);
+    return Math.max(
+        0,
+        assignmentBranch.scoreRaw - assignmentBranch.scoreMax * penaltyPercentOffMax,
+    );
 }
 
 function getLearnerData(
@@ -216,26 +219,27 @@ function getLearnerData(
     AssignmentGroup, // ONE AssignmentGroup (which includes an ARRAY of AssignmentInfo)
     LearnerSubmissions, // ARRAY of LearnerSubmission
 ) {
-    log("Preparing to grow submissionsTree");
+    // log("Preparing to grow submissionsTree");
     submissionsTree = growSubmissionsTree();
-    log(submissionsTree);
-    clog(submissionsTree);
+    // log(submissionsTree);
+    // clog(submissionsTree);
     submissionsTree = pruneSubmissionsTree(CutoffDate, latenessPenalty);
     // log(submissionsTree);
     // clog(submissionsTree);
 
+    // TODO: flatten/transfer the submissionsTree dict into the results
+    // TODO: the current version of submissionsTree could have gone
+    //       directly into the results. (u__u);
     let result = [];
     result = [
         {
+            placeholder: "this is a placeholder",
             id: 1234,
             avg: 1,
             1: 1,
             2: 1,
         },
     ];
-
-    // log("\nfinal answer:");
-    // log(submissionsTree);
 
     return submissionsTree;
 } // end getLearnerData

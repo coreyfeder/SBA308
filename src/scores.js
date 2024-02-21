@@ -145,5 +145,15 @@ function getLearnerData(
     return result;
 } // end getLearnerData
 
-// Run if called externally
-getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+if (
+    typeof CourseInfo == "undefined" ||
+    typeof AssignmentGroup == "undefined" ||
+    typeof LearnerSubmissions == "undefined" ||
+    Boolean(CourseInfo) ||
+    Boolean(AssignmentGroup) ||
+    Boolean(LearnerSubmissions)
+) {
+    console.log("getLearnerData loaded, but no input data found.");
+} else {
+    getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+}
